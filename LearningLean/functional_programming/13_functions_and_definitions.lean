@@ -55,3 +55,29 @@ def joinStringsWith (s1: String) (s2: String) (s3: String) : String :=
 def volume (height : Nat) (width : Nat) (depth : Nat) : Nat := height * width * depth
 
 #eval volume 2 3 4
+
+/- In the previous chapter we saw that types are very important. Unlike typical programming languages
+where we can define type aliases, Lean types are an expression like any other. Hence, definitions can
+refer to types in the same way they can refer to other values.-/
+
+-- We can define a type alias shortening the name of String, for instance
+def Str : Type := String
+
+-- Then, we can use this alias in any other definition or function
+def someString : Str := "Some string"
+
+#eval someString.length
+
+-- We can't do Str.length someString though
+
+-- This has some limitations when dealing with numbers.
+def NaturalNumber : Type := Nat
+
+def someNumber : NaturalNumber := 12  -- Fails because numbers are overloaded to Nat
+
+def anotherNumber : NaturalNumber := (38 : Nat)  -- We use Nat's overloading rules to be used for 38
+
+-- We can use abbrev instead of def to define a new type that will follow the overloading resolution rules
+abbrev N : Type := Nat
+
+def thirtyNine : N := 39  -- This works!
