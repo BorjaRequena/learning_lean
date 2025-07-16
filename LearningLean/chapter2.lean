@@ -25,4 +25,11 @@ example (a b c : ℝ) : a * (b * c) = b * (a * c) := by
 
 -- Now that we know how to use rw and mul_assoc and mul_comm, we can start doing more complex stuff
 example (a b c d e f : ℝ) (h : a * b = c * d) (h' : e = f) : a * (b * e) = c * (d * f) := by
-  sorry
+  rw [h']
+  rw [← mul_assoc]
+  rw [h]
+  rw [mul_assoc]
+
+-- We can take the same example and write the multiple rewrites in a single line.
+example (a b c d e f : ℝ) (h : a * b = c * d) (h' : e = f) : a * (b * e) = c * (d * f) := by
+  rw [h', ← mul_assoc, h, mul_assoc]  -- We can see the progress placing the cursor after each comma
