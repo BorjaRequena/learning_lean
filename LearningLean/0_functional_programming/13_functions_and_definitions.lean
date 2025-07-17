@@ -13,10 +13,10 @@ def bye : String := "Bye"
 the function's arguments before the type separated by spaces.-/
 
 -- Let's define a function that adds 1 to a number
-def add_1 (n : Nat) : Nat := n + 1
+def add1 (n : Nat) : Nat := n + 1
 
 -- Now we can evaluate the function
-#eval add_1 3
+#eval add1 3
 
 -- We can add multiple arguments by separating them with commas.
 def maximum (n : Nat) (k : Nat) : Nat := if n < k then k else n
@@ -30,7 +30,7 @@ def concatenate_with_space (s1 : String) (s2 : String) : String := String.append
 #eval concatenate_with_space "Hello" "world"
 
 -- Lean returns a function's signature when its type is checked with #check
-#check add_1
+#check add1
 
 /- Behind the scenes, all functions actually expect one argument. Functions with multiple arguments
 are, in fact, functions that return functions and this new function takes the next argument until
