@@ -10,3 +10,14 @@ In this repository, I document my Lean 4-learning journey as I work my way throu
 1. I find the [functional programming in Lean page](https://lean-lang.org/functional_programming_in_lean/) is a great way to start learning, as it introduces the basics of LEAN4 as a programing language.
 2. I enjoyed going through the [mathematics in lean](https://leanprover-community.github.io/mathematics_in_lean/) tutorial, as it offers an introduction to the methods for theorem proving and their syntax. 
 3. I also found the [natural number game](https://adam.math.hhu.de/#/g/leanprover-community/nng4) frames learning Lean as a game, which is kind of addictive!
+
+# Style guides for Lean
+
+I have empirically found that:
+- Terms of Props, like theorems and lemmas go in `snake_case`.
+- Types, Props, structures and classes go in `UpperCamelCase`.
+- Data-returning definitions, such as functions or constants whose return is in `Type` should be in `lowerCamelCase`.
+- Functions should be named as if they where what they return, i. e., use `snake_case` if it returns a Prop, or `UpperCamelCase` if a Type.
+- When something named in `UpperCamelCase` is part of something in `snake_case`, drop it to `lowerCamelCase`.
+- Short acronyms stay as a block of upper/lower case depending on the first letter, e. g., `LE` or `IO`. Longer acronyms ($\geq 4$ letters) combine upper and lower case.
+- All these rules apply to structure fields.
