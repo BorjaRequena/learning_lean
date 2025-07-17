@@ -106,3 +106,17 @@ Arguments can be DECLARED IMPLICIT by wrapping them in curly braces instead of p
 -/
 
 -- Let's rewrite the replaceX function with implicit type argumen
+def replaceXImplicit {α : Type} (point : PolyPoint α) (newX : α) : PolyPoint α :=
+  { point with x := newX }
+
+#eval replaceXImplicit natOrigin 1
+#eval replaceXImplicit floatOrigin 1.0
+#eval replaceXImplicit stringOrigin "1"
+
+-- Same for length
+def lengthImplicit {α : Type} (xs : List α) : Nat :=
+  match xs with
+  | [] => 0
+  | _ :: ys => Nat.succ (lengthImplicit ys)
+
+#eval lengthImplicit primesUnder10
