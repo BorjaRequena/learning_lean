@@ -150,4 +150,31 @@ structure Book where
   price : Float
   -/
 
--- 1. Define the RectangularP
+-- 1. Define the RectangularPrism structure
+structure RectangularPrism where
+  height : Float
+  width : Float
+  depth : Float
+
+-- 2. Define the volume function
+def volume (r : RectangularPrism) : Float :=
+  r.height * r.width * r.depth
+
+-- 3. Define the Segment structure and a length function
+structure Segment where
+  point1 : CartesianPoint
+  point2 : CartesianPoint
+
+def length (s : Segment) : Float :=
+  distance s.point1 s.point2  -- We can use the distance function we defined earlier
+
+#eval length { point1 := { x := 0.0, y := 0.0 }, point2 := { x := 1.0, y := 1.0 } }
+
+-- 4. Which names re introduced by the declaration of RectangularPrism?
+-- Don't fully understand the question tbh. The names would be the constructor and the accessors?
+#check RectangularPrism.height
+#check RectangularPrism.width
+#check RectangularPrism.depth
+
+-- 5. Which names are introduced by the declaration of Hamster and Book? What are their types?
+-- Same as above but for those structures
