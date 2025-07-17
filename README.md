@@ -13,11 +13,18 @@ In this repository, I document my Lean 4-learning journey as I work my way throu
 
 # Style guides for Lean
 
-I have empirically found that:
-- Terms of Props, like theorems and lemmas go in `snake_case`.
-- Types, Props, structures and classes go in `UpperCamelCase`.
-- Data-returning definitions, such as functions or constants whose return is in `Type` should be in `lowerCamelCase`.
+In the [Lean 4 survival guide](https://github.com/leanprover-community/mathlib4/wiki/Lean-4-survival-guide-for-Lean-3-users) contains some guidelines for naming conventions.
+I found the TL;DR-version of it is:
+- Can you prove it? Then it's `snake_case`
+- Is it a property / type? `UpperCamelCase`
+- Is it a data / value computation? `lowerCamelCase`
+- Name functions in the style you'd name what they return.
+
+Here's the longer, detailed one:
+- Terms of Prop (no computational content), like theorems and lemmas go in `snake_case`.
+- Types and Props themselves, structures and classes (computational content) go in `UpperCamelCase`.
+- Terms of Types, such as definitions, constants, values, data fields, etc. should be in `lowerCamelCase`.
 - Functions should be named as if they where what they return, i. e., use `snake_case` if it returns a Prop, or `UpperCamelCase` if a Type.
-- When something named in `UpperCamelCase` is part of something in `snake_case`, drop it to `lowerCamelCase`.
+- When an `UpperCamelCase` name appears inside something in `snake_case`, drop it to `lowerCamelCase`.
 - Short acronyms stay as a block of upper/lower case depending on the first letter, e. g., `LE` or `IO`. Longer acronyms ($\geq 4$ letters) combine upper and lower case.
 - All these rules apply to structure fields.
