@@ -279,3 +279,37 @@ def extractString (value : OnlyStrings) : String :=
   -- No need to handle Sum.inr case because it's impossible!
 
 #eval extractString someString
+
+/- EXERCISES
+1. Write a function to find the last entry in a list. It should return an Option.
+2. Write a function that finds the first entry in a list that satisfies a given predicate. Start
+the definition with def List.findFirst? {α : Type} (xs : List α) (predicate : α → Bool) : Option α := ….
+3. Write a function Prod.switch that switches the two fields in a pair for each other. Start the
+definition with
+def Prod.switch {α β : Type} (pair : α × β) : β × α := ….
+4. Rewrite the PetName example to use a custom datatype and compare it to the version that uses Sum.
+5. Write a function zip that combines two lists into a list of pairs. The resulting list should be
+as long as the shortest input list. Start the definition with
+def zip {α β : Type} (xs : List α) (ys : List β) : List (α × β) := ….
+6. Write a polymorphic function take that returns the first n entries in a list, where n is a Nat.
+If the list contains fewer than n entries, then the resulting list should be the entire input list.
+#eval take 3 ["bolete", "oyster"] should yield ["bolete", "oyster"], and
+#eval take 1 ["bolete", "oyster"] should yield ["bolete"].
+7. Using the analogy between types and arithmetic, write a function that distributes products over
+sums. In other words, it should have type α × (β ⊕ γ) → (α × β) ⊕ (α × γ).
+8. Using the analogy between types and arithmetic, write a function that turns multiplication by
+two into a sum. In other words, it should have type Bool × α → α ⊕ α.
+-/
+
+-- 1. Function to find the last entry in a list returning an Option
+def lastEntry? {α : Type} (xs : List α) : Option α :=
+  match xs with
+  | [] => none  -- Reach the tail or empty list
+  | [x] => some x  -- Reach the last entry
+  | _ :: xs => lastEntry? xs  -- Keep going until we reach the last entry
+
+#eval lastEntry? [1, 2, 3]
+#eval lastEntry? [1]
+#eval lastEntry? ([] : List Nat)
+
+-- 2. Function to find the first entry in a list that satisfies a given predicate
