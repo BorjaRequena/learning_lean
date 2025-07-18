@@ -216,5 +216,38 @@ def countDogs (pets : List PetName) : Nat :=
 
 /-
 ** UNIT **
+Unit is a type with just one argumentless constructor. It describes only a single value, which
+consists of said constructor applied to no arguments whatsoever.
 
+inductive Unit : Type where
+  | unit : Unit
+
+In polymorphic code, Unit can be used as a placeholder for data that is missing. For instance,
+the following inductive datatype represents arithmetic expressions:
+
+inductive ArithExpr (ann : Type) : Type where
+  | int : ann → Int → ArithExpr ann
+  | plus : ann → ArithExpr ann → ArithExpr ann → ArithExpr ann
+  | minus : ann → ArithExpr ann → ArithExpr ann → ArithExpr ann
+  | times : ann → ArithExpr ann → ArithExpr ann → ArithExpr ann
+
+The type argument ann stands for annotations, and each constructor is annotated. Expressions coming
+from a parser might be annotated with source locations, so a return type of ArithExpr SourcePos
+ensures that the parser put a SourcePos at each subexpression. Expressions that don't come from the
+parser, however, will not have source locations, so their type can be ArithExpr Unit.
+
+Since all Lean functions take arguments, zero-argument functions in other languages can be
+represented as functions that take a Unit argument. In a return position, the Unit type is similar
+to void in languages derived from C. By being an intentionally uninteresting value, Unit allows
+this to be expressed without requiring a special-purpose void feature in the type system. Unit's
+constructor can be written as empty parentheses: () : Unit.
 -/
+
+#check ()
+
+def sayHello (_ : Unit) : String := "Hello"
+#eval sayHello ()
+
+-- With some fancier notation
+def sayHi : Unit → String := fun _ => "Hi"
+#eval sayHi ()
