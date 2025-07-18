@@ -251,3 +251,31 @@ def sayHello (_ : Unit) : String := "Hello"
 -- With some fancier notation
 def sayHi : Unit → String := fun _ => "Hi"
 #eval sayHi ()
+
+/- ** EMPTY **
+
+The Empty datatype has no constructors whatsoever. Thus, it indicates unreachable code, because no
+series of calls can ever terminate with a value at type Empty.
+
+Empty is not used nearly as often as Unit. However, it is useful in some specialized contexts. Many
+polymorphic datatypes do not use all of their type arguments in all of their constructors. For
+instance, Sum.inl and Sum.inr each use only one of Sum's type arguments. Using Empty as one of the
+type arguments to Sum can rule out one of the constructors at a particular point in a program. This
+can allow generic code to be used in contexts that have additional restrictions.
+-/
+
+-- Let's see an example where we rule out the inr constructor using Empty
+-- This creates a type that can only contain left values (String), never right values
+def OnlyStrings : Type := String ⊕ Empty
+
+-- We can only construct values using Sum.inl, never Sum.inr because Sum.inr expects Empty
+def someString : OnlyStrings := Sum.inl "hello"
+def impossibleString : OnlyStrings := Sum.inr "ampassabol :("
+
+-- This allows us to only work with Sum.inr in functions that works with OnlyStrings
+def extractString (value : OnlyStrings) : String :=
+  match value with
+  | Sum.inl s => s
+  -- No need to handle Sum.inr case because it's impossible!
+
+#eval extractString someString
