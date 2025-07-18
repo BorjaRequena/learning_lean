@@ -120,3 +120,29 @@ def lengthImplicit {α : Type} (xs : List α) : Nat :=
   | _ :: ys => Nat.succ (lengthImplicit ys)
 
 #eval lengthImplicit primesUnder10
+
+/- Besides Lists, Lean offers a bunch of other structures and inductive datatypes.
+
+** OPTION **
+Lean offers an Option datatype to indicate the possibility of missing values. This is in place of
+the typical null of other programming languages. For example, we call Option (List String) to
+indicate a list of strings that may be empty.
+inductive Option (α : Type) : Type where
+  | none : Option α
+  | some (val : α) : Option α
+Option has two constructors none and some, that respectively represent the absence and presence of
+a value. This allows multiple layers of optionality like Option (Option Int), which can be
+constructed either with `some (some 3)` or `none none` (?? not sure about this last one)).
+
+For example, the function List.head? finds the head of a list if it exists. The ? is just part of
+the name to indicate it returns an Option.
+def List.head? {α : Type} (xs : List α) : Option α :=
+  match xs with
+  | [] => none
+  | y :: _ => some y
+-/
+
+#eval primesUnder10.head?
+#eval [].head?  -- Can't infer implicit type
+#eval [].head? (α := Int)
+#eval ([] : List Int).head?
