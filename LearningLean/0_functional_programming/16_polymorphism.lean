@@ -283,7 +283,8 @@ def extractString (value : OnlyStrings) : String :=
 /- EXERCISES
 1. Write a function to find the last entry in a list. It should return an Option.
 2. Write a function that finds the first entry in a list that satisfies a given predicate. Start
-the definition with def List.findFirst? {α : Type} (xs : List α) (predicate : α → Bool) : Option α := ….
+the definition with
+def List.findFirst? {α : Type} (xs : List α) (predicate : α → Bool) : Option α := ….
 3. Write a function Prod.switch that switches the two fields in a pair for each other. Start the
 definition with
 def Prod.switch {α β : Type} (pair : α × β) : β × α := ….
@@ -313,3 +314,19 @@ def lastEntry? {α : Type} (xs : List α) : Option α :=
 #eval lastEntry? ([] : List Nat)
 
 -- 2. Function to find the first entry in a list that satisfies a given predicate
+def List.findFirst? {α : Type} (xs : List α) (predicate : α → Bool) : Option α :=
+  match xs with
+  | [] => none  -- Reach the tail or empty list
+  -- Keep going until we find the first entry that satisfies the predicate or reach the tail
+  | x :: xs => if predicate x then some x else List.findFirst? xs predicate
+
+#eval List.findFirst? [1, 2, 3] (fun x => x >= 2)
+#eval List.findFirst? [1, 2, 3] (fun x => x > 4)
+#eval List.findFirst? ([] : List Nat) (fun x => x > 2)
+
+-- 3. Function to switch the two fields in a pair
+def Prod.switch {α β : Type} (pair : α × β) : β × α :=
+  (pair.snd, pair.fst)
+
+#eval Prod.switch (1, "hello")
+#eval Prod.switch ("hello", 1)
