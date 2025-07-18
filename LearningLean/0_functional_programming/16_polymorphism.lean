@@ -146,3 +146,32 @@ def List.head? {α : Type} (xs : List α) : Option α :=
 #eval [].head?  -- Can't infer implicit type
 #eval [].head? (α := Int)
 #eval ([] : List Int).head?
+
+/-
+** PROD **
+Prod (short for product) is a datatype that represents a pair of values. It is similar to a tuple
+in other programming languages. For instance, we could write PolyPoint Nat as Prod Nat Nat. In
+some cases, it's better to write a custom structure or type, which will make the code more readable
+and may prevent some errors. However, there are many other cases where this is not worth it and we
+just need the notion of a "pair of things".
+structure Prod (α : Type) (β : Type) : Type where
+  fst : α
+  snd : β
+
+Prods are used so often that Lean provides a special syntax for them: α × β. This is \ x or \ times
+-/
+
+-- Let's see an example with the full syntax
+def fives : Prod String Nat := { fst := "five", snd := 5 }
+
+#eval fives
+
+-- We can keep it simpler and more readable with the special syntax
+def threes : String × Int := ("three", 3)
+
+-- The notation is right-associative, meaning the following two expressions are equivalent
+def sevens : String × Int × Nat := ("VII", 7, 4 + 3)
+def sevens' : String × (Int × Nat) := ("VII", (7, 4 + 3))
+
+#eval sevens
+#eval sevens'
