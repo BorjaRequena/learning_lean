@@ -330,3 +330,74 @@ def Prod.switch {α β : Type} (pair : α × β) : β × α :=
 
 #eval Prod.switch (1, "hello")
 #eval Prod.switch ("hello", 1)
+
+-- 4. Rewrite the PetName example to use a custom datatype
+inductive PetNameCustom where
+  | dog (name : String)
+  | cat (name : String)
+deriving Repr
+
+def animalsCustom : List PetNameCustom :=
+  [PetNameCustom.dog "Rex", PetNameCustom.cat "Whiskers", PetNameCustom.dog "Spot", PetNameCustom.dog "Snuffles", PetNameCustom.cat "Tiger"]
+
+#eval animalsCustom
+
+def countCats (pets : List PetNameCustom) : Nat :=
+  match pets with
+  | [] => 0
+  | PetNameCustom.cat _ :: remainingPets => Nat.succ (countCats remainingPets)
+  | PetNameCustom.dog _ :: remainingPets => countCats remainingPets
+
+#eval countCats animalsCustom
+
+-- 5. Function to zip two lists into a list of pairs
+def zip {α β : Type} (xs : List α) (ys : List β) : List (α × β) :=
+  match xs, ys with
+  | [], _ => []
+  | _, [] => []
+  | x :: xs, y :: ys => (x, y) :: (zip xs ys)
+
+#eval zip [1, 2, 3] ["a", "b", "c"]
+#eval zip [1, 2, 3] ["a", "b"]
+#eval zip [1, 2, 3] ([] : List Int)
+#eval zip ([] : List Int) ["a", "b", "c"]
+
+-- 6. Function to take the first n entries in a list
+def take {α : Type} (n : Nat) (xs : List α) : List α :=
+  match xs with
+  | [] => []
+  | x :: xs => if n > 0 then x :: (take (n - 1) xs) else []
+
+#eval take 1 [1, 2, 3, 4, 5]
+#eval take 3 [1, 2, 3, 4, 5]
+#eval take 0 [1, 2, 3, 4, 5]
+#eval take 10 [1, 2, 3, 4, 5]
+
+-- 7. Function to distribute products over sums α × (β ⊕ γ) → (α × β) ⊕ (α × γ)
+-- Exmaple (Nat, String ⊕ Int) → (Nat × String) ⊕ (Nat × Int)
+def distribute {α β γ : Type} (x : α) (y : β ⊕ γ) : (α × β) ⊕ (α × γ) :=
+  match y with
+  | Sum.inl left => Sum.inl (x, left)
+  | Sum.inr right => Sum.inr (x, right)
+
+#eval distribute 42 (Sum.inl "hello" : String ⊕ Int)
+#eval distribute 42 (Sum.inr 123 : String ⊕ Int)
+
+def testSums : List (String ⊕ Int) := [
+  Sum.inl "hello",
+  Sum.inr 42,
+  Sum.inl "world",
+  Sum.inr 123
+]
+#eval testSums.map (fun sum => distribute 10 sum)
+
+-- 8. Function to turn multiplication by two into a sum, shoudl have type Bool × α → α ⊕ α
+def prodToSum {α : Type} (pair : Bool × α) : α ⊕ α :=
+  match pair with
+  | (true, x) => Sum.inl x
+  | (false, x) => Sum.inr x
+
+#eval prodToSum (true, "hello")
+#eval prodToSum (false, "world")
+#eval prodToSum (true, 42)
+#eval prodToSum (false, 123)
