@@ -127,9 +127,11 @@ def lengthImplicit {α : Type} (xs : List α) : Nat :=
 Lean offers an Option datatype to indicate the possibility of missing values. This is in place of
 the typical null of other programming languages. For example, we call Option (List String) to
 indicate a list of strings that may be empty.
+
 inductive Option (α : Type) : Type where
   | none : Option α
   | some (val : α) : Option α
+
 Option has two constructors none and some, that respectively represent the absence and presence of
 a value. This allows multiple layers of optionality like Option (Option Int), which can be
 constructed either with `some (some 3)` or `none none` (?? not sure about this last one)).
@@ -154,6 +156,7 @@ in other programming languages. For instance, we could write PolyPoint Nat as Pr
 some cases, it's better to write a custom structure or type, which will make the code more readable
 and may prevent some errors. However, there are many other cases where this is not worth it and we
 just need the notion of a "pair of things".
+
 structure Prod (α : Type) (β : Type) : Type where
   fst : α
   snd : β
@@ -175,3 +178,43 @@ def sevens' : String × (Int × Nat) := ("VII", (7, 4 + 3))
 
 #eval sevens
 #eval sevens'
+
+/-
+** SUM **
+Sum is a datatype that represents a choice between two values. It is similar to a union in other
+programming languages. For instance, Sum String Int is either a String or an Int, or we could write
+Option Nat as Sum Nat Nat. Like Prod, Sum should be used either when writing very generic code, for
+a very small section of code. In most situations, it is more readable and maintainable to use a
+custom inductive type.
+
+inductive Sum (α : Type) (β : Type) : Type where
+  | inl : α → Sum α β
+  | inr : β → Sum α β
+
+Sum has two constructors inl and inr, that respectively represent the left and right choice. They
+abbreviate left and right injection.
+
+We can use the “circled plus” notation α ⊕ β to represent Sum α β.
+-/
+
+def PetName : Type := String ⊕ String
+
+def animals : List PetName :=
+  -- Left are dog names, right are cat names
+  [Sum.inl "Rex", Sum.inr "Whiskers", Sum.inl "Spot", Sum.inl "Snuffles", Sum.inr "Tiger"]
+
+#eval animals
+
+-- We can use pattern matching, for instance, to count the number of dogs in a name list
+def countDogs (pets : List PetName) : Nat :=
+  match pets with
+  | [] => 0
+  | Sum.inl _ :: remainingPets => Nat.succ (countDogs remainingPets)  -- Sum one for each Sum.inl
+  | Sum.inr _ :: remainingPets => countDogs remainingPets  -- Ignore Sum.inr
+
+#eval countDogs animals
+
+/-
+** UNIT **
+
+-/
