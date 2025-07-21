@@ -193,3 +193,35 @@ def sameLength' : List α → List β → Bool
 
 #eval sameLength' [1, 2, 3] [4, 5, 6]
 #eval sameLength' [1, 2, 3] [4, 5]
+
+/-
+** Natural number patterns **
+Similar to how Lean offers a special syntax for matching on lists, it also offers a special syntax
+for matching on natural numbers.
+
+For example, we use `[]` to match `List.nil` and `x :: xs` to match `List.cons x xs`. Similarly, we
+can use `0` to match `Nat.zero` and `n + 1` to match `Nat.succ n`. In this notation, the arguments
+to the + pattern serve different roles. Behind the scenes, the left argument `n` becomes an argument
+to some number of `Nat.succ` patterns, and the right argument `1` determines how many `Nat.succ`s
+to wrap around the pattern.
+-/
+
+-- Let's see some examples! In chapter 1.5, we wrote a function to determine if a number is even
+def even : Nat → Bool
+  | 0 => true
+  | n + 1 => not (even n)
+
+#eval even 0
+#eval even 1
+#eval even 8
+
+-- Let's see another example with multiple `Nat.succ`s
+def halve : Nat → Nat
+  | 0 => 0
+  | 1 => 0
+  | n + 2 => halve n + 1  -- Nat.succ (Nat.succ n) => Nat.succ (halve n)
+
+#eval halve 0
+#eval halve 1
+#eval halve 4
+#eval halve 9
