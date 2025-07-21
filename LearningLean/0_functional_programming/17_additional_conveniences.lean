@@ -360,3 +360,28 @@ def Inline.string?' (inline : Inline) : Option String :=
 
 #eval Inline.string?' (Inline.string "hello")
 #eval Inline.string?' (Inline.lineBreak)
+
+/-
+** Positional structure arguments **
+In the previous section 1.4, we have learned about two ways of constructing structures:
+- Directly calling the constructor `StructureName.mk arg1 arg2 ...`
+- Using the `{ arg1 := value1, arg2 := value2, ... }` syntax
+
+In some contexts, it can be convenient to pass arguments positionally, rather than by name, without
+naming the constructor directly (`.mk`). For instance, defining a variety of similar structure
+types can help keep domain concepts separate, but the natural way to read the code may treat each
+of them as being essentially a tuple. In these contexts, the arguments can be enclosed in angle
+brackets ⟨ and ⟩.
+
+Just as with the brace notation for named constructor arguments, this positional syntax can only be
+used in a context where Lean can determine the structure's type, either from a type annotation or
+from other type information in the program.
+-/
+
+structure Point where
+  x : Float
+  y : Float
+deriving Repr
+
+#eval Point.mk 1.0 2.0
+#eval (⟨1.0, 2.0⟩ : Point)
