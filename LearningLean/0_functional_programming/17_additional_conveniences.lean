@@ -100,7 +100,7 @@ def unzip' : List (α × β) -> List α × List β
 -- Local definitions can use pattern matching when one pattern can match all cases
 def unzip'' : List (α × β) -> List α × List β
   | [] => ([], [])
-  | (x, y) :: pairs => let (xs, ys) := unzip'' pairs  -- Unpack the tuple
+  | (x, y) :: pairs => let (xs, ys) : List α × List β := unzip'' pairs  -- Unpack the tuple
     (x :: xs, y :: ys)
 
 #eval unzip'' [(1, "a"), (2, "b"), (3, "c")]
@@ -116,3 +116,42 @@ def reverse (xs : List α) : List α :=
 --reaches the end of the input list, soFar contains a reversed version of the input.
 
 #eval reverse [1, 2, 3]
+
+/-
+** Type inference **
+In many situations, Lean can automatically determine an expression's type. In these cases, explicit
+types may be omitted from both top-level definitions (with def) and local definitions (with let).
+
+As a rule of thumb, omitting the types of literal values (like strings and numbers) usually works,
+although Lean may pick a type for literal numbers that is more specific than the intended type.
+Lean can usually determine a type for a function application, because it already knows the argument
+types and the return type. Omitting return types for function definitions will often work, but
+function parameters typically require annotations. Definitions that are not functions do not need
+type annotations if their bodies do not need type annotations, and the body of this definition is a
+function application.
+
+Generally speaking, it is a good idea to err on the side of too many, rather than too few, type
+annotations. Explicit types communicate assumptions about the code to readers. Even if Lean can
+determine the type on its own, it can still be easier to read code without having to repeatedly
+query Lean for type information. Additionally, explicit types help localize errors. The more
+explicit a program is about its types, the more informative the error messages can be. Finally,
+explicit types make it easier to write the program in the first place.
+-/
+
+-- We can remove the type annotation from the local definition in the unzip function
+-- Local definitions can use pattern matching when one pattern can match all cases
+def unzipUnannotated : List (α × β) -> List α × List β
+  | [] => ([], [])
+  | (x, y) :: pairs => let (xs, ys) := unzipUnannotated pairs  -- Don't need to specify a type
+    (x :: xs, y :: ys)
+
+#eval unzipUnannotated [(1, "a"), (2, "b"), (3, "c")]
+
+-- We can omit the return type of the function if we explicitly name the variable to match
+def unzipUntyped (pairs : List (α × β)) :=  -- Omit the return type
+  match pairs with  -- But explicitly match with variable name
+  | [] => ([], [])
+  | (x, y) :: pairs => let (xs, ys) := unzipUntyped pairs  -- Don't need to specify a type
+    (x :: xs, y :: ys)
+
+#eval unzipUntyped [(1, "a"), (2, "b"), (3, "c")]
