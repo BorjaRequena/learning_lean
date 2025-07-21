@@ -270,3 +270,56 @@ def double : Nat → Nat := fun
   -- I don't see the benefit of this syntax
   | 0 => 0
   | n + 1 => double n + 2  -- Add 2 n times
+
+/-
+** Namespaces **
+Each name in Lean occurs in a namespace, which is a collection of names. Names are placed in
+namespaces using `.`, so `List.map` is the name `map` in the `List` namespace. Names in different
+namespaces do not conflict with each other. This means that `List.map` and `Array.map` are
+different names. Namespaces may be nested, so `Project.Frontend.User.loginTime` is the name
+`loginTime` in the nested namespace `Project.Frontend.User`.
+
+Names can be directly defined within a namespace. For example, we can define a function `foo`
+for a namespace directly with `def namespace.foo`. Alternatively, a sequence of declarations can be
+placed in a namespace using the `namespace` and `end` commands.
+
+The names within a namespace can be accessed using the dot notation `namespace.name`, or by opening
+it prior to using the names therein. This uses the notation `open namespace in`.
+-/
+
+-- Define a function `double` directly in the `Nat` namespace
+def Nat.double (n : Nat) : Nat := n + n
+
+#eval Nat.double 2
+#eval (3 : Nat).double
+
+-- Using the `namespace` command, we can define multiple functions at once
+namespace NewNamespace
+def triple (x : Nat) : Nat := 3 * x
+def quadruple (x : Nat) : Nat := 2 * x + 2 * x
+end NewNamespace
+
+#check NewNamespace.triple
+#check NewNamespace.quadruple
+
+#eval NewNamespace.triple 2
+#eval NewNamespace.quadruple 2
+
+-- Using the `open ... in` command
+open NewNamespace in
+#check triple
+
+def timesTwelve (x : Nat) : Nat :=
+  open NewNamespace in  -- Need to reimport the namespace even if opened a few lines above
+  triple (quadruple x)
+
+#eval timesTwelve 2
+
+-- We can open the namespace for the rest of the file removing the `in` keyword
+open NewNamespace
+#check triple
+
+def timesTwelve' (x : Nat) : Nat :=
+  triple (quadruple x)
+
+#eval timesTwelve' 2
