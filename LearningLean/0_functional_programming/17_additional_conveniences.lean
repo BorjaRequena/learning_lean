@@ -72,3 +72,47 @@ def getSomething' {α : Type} (default : α) (value : Option α): α :=
 
 #eval getSomething' 0 (some 1)
 #eval getSomething' 0 none
+
+/-
+** Local definitions **
+In Lean, we can use `let` to perform local definitions following a similar syntax to the top-level
+`def`. After the local definition, the expression in which the local definition is available must
+be on a new line, starting at a column in the file that is less than or equal to that of the let
+keyword. -/
+
+-- Consider the following unzip function that transforms a list of pairs into a pair of lists
+def unzip : List (α × β) -> List α × List β
+  | [] => ([], [])
+  -- If it's a pair consecutive to a list, we take the first and second elements of uzipping the
+  -- rest of the list and append them to each element of the pair
+  | (x, y) :: pairs => (x :: (unzip pairs).fst, y :: (unzip pairs).snd)
+
+#eval unzip [(1, "a"), (2, "b"), (3, "c")]
+
+-- In this case, we can use a local definition to avoid repeating the unzip function over pairs
+def unzip' : List (α × β) -> List α × List β
+  | [] => ([], [])
+  | (x, y) :: pairs => let unzipped : List α × List β := unzip pairs
+    (x :: unzipped.fst, y :: unzipped.snd)
+
+#eval unzip' [(1, "a"), (2, "b"), (3, "c")]
+
+-- Local definitions can use pattern matching when one pattern can match all cases
+def unzip'' : List (α × β) -> List α × List β
+  | [] => ([], [])
+  | (x, y) :: pairs => let (xs, ys) := unzip'' pairs  -- Unpack the tuple
+    (x :: xs, y :: ys)
+
+#eval unzip'' [(1, "a"), (2, "b"), (3, "c")]
+
+-- The difference between let and def is that recursive let definitions must be explicitly written
+def reverse (xs : List α) : List α :=
+  let rec helper : List α → List α → List α  -- Recursive helper function with `let rec`
+    | [], soFar => soFar
+    | y :: ys, soFar => helper ys (y :: soFar)
+  helper xs []
+
+-- The helper function walks down the input list, moving one entry at a time over to soFar. When it
+--reaches the end of the input list, soFar contains a reversed version of the input.
+
+#eval reverse [1, 2, 3]
