@@ -385,3 +385,11 @@ deriving Repr
 
 #eval Point.mk 1.0 2.0
 #eval (⟨1.0, 2.0⟩ : Point)
+
+/-
+** String interpolation **
+In Lean, prefixing a string with s! triggers interpolation, where expressions contained in curly
+braces inside the string are replaced with their values. This is similar to f-strings in Python.
+-/
+
+#eval s!"Three times five is {triple 5}"
