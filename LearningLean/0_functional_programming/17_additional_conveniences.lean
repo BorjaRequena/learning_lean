@@ -316,10 +316,47 @@ def timesTwelve (x : Nat) : Nat :=
 #eval timesTwelve 2
 
 -- We can open the namespace for the rest of the file removing the `in` keyword
-open NewNamespace
+open NewNamespace  -- Don't use the `in` keyword
 #check triple
 
 def timesTwelve' (x : Nat) : Nat :=
-  triple (quadruple x)
+  triple (quadruple x)  -- Don't need to open the namespace again
 
 #eval timesTwelve' 2
+
+/-
+** If let **
+When consuming values that have a sum type, it is often the case that only a single constructor is
+of interest. So far, we have seen how to use pattern matching to handle these cases. However, it
+could be that using an `if let`-pattern is more readable in some cases.
+
+This is like the pattern match with `let` that we saw earlier but applicable to sum types because
+the `else` provides the fallback case.
+-/
+
+-- Let's see an example of a sum type that describes markdown inline elements
+inductive Inline : Type where
+  | lineBreak
+  | string : String → Inline
+  | emph : Inline → Inline
+  | strong : Inline → Inline
+
+-- A function to extract the string from an inline element would be:
+def Inline.string? (inline : Inline) : Option String :=
+  match inline with
+  | Inline.string s => some s
+  | _ => none
+
+#eval Inline.string? (Inline.string "hello")
+#eval Inline.string? (Inline.lineBreak)
+
+-- We can use the `if let` syntax to extract the string and make the code more explicit
+def Inline.string?' (inline : Inline) : Option String :=
+  -- I'm not sure this is a good example because the code is way more verbose in this case
+  if let Inline.string s := inline then
+    some s
+  else
+    none
+
+#eval Inline.string?' (Inline.string "hello")
+#eval Inline.string?' (Inline.lineBreak)
