@@ -155,3 +155,41 @@ def unzipUntyped (pairs : List (α × β)) :=  -- Omit the return type
     (x :: xs, y :: ys)
 
 #eval unzipUntyped [(1, "a"), (2, "b"), (3, "c")]
+
+/-
+** Simulataneous matching **
+Pattern-matching expressions, just like pattern-matching definitions, can match on multiple values
+at once. Both the expressions to be inspected and the patterns that they match against are written
+with commas between them, similarly to the syntax used for definitions.
+-/
+
+-- As we saw earlier in the chapter, we can do simultaneous matching in the `drop` function
+-- See the `drop` function above for a simpler definition without explicit matching
+def drop' (n : Nat) (xs : List α) : List α :=
+  match n, xs with  -- Simultaneous matching
+  | Nat.zero, ys => ys
+  | _, [] => []
+  | Nat.succ n , _ :: ys => drop' n ys
+
+#eval drop' 2 [1, 2, 3, 4, 5]
+#eval drop' 0 ["hello", "world", "lean", "is", "fun"]
+#eval drop' 5 ([] : List Nat)
+
+-- Another example matching over two lists at once
+def sameLength (xs : List α) (ys : List β) : Bool :=
+  match xs, ys with
+  | [], [] => true
+  | _ :: xs, _ :: ys => sameLength xs ys
+  | _, _ => false
+
+#eval sameLength [1, 2, 3] [4, 5, 6]
+#eval sameLength [1, 2, 3] [4, 5]
+
+-- Putting together what we've learned:
+def sameLength' : List α → List β → Bool
+  | [], [] => true
+  | _ :: xs, _ :: ys => sameLength' xs ys
+  | _, _ => false
+
+#eval sameLength' [1, 2, 3] [4, 5, 6]
+#eval sameLength' [1, 2, 3] [4, 5]
