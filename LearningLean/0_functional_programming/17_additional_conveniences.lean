@@ -219,9 +219,54 @@ def even : Nat → Bool
 def halve : Nat → Nat
   | 0 => 0
   | 1 => 0
-  | n + 2 => halve n + 1  -- Nat.succ (Nat.succ n) => Nat.succ (halve n)
+  | n + 2 => halve n + 1  -- Nat.succ (Nat.succ n) => Nat.succ (halve n) (add 1 every 2 numbers)
+
 
 #eval halve 0
 #eval halve 1
 #eval halve 4
 #eval halve 9
+
+/-
+** Anonymous functions **
+Functions in Lean do not need to be defined at the top level. As expressions, functions are produced
+with the `fun` syntax: begin with the keyword fun, followed by one or more parameters, which are
+separated from the return expression using =>. Same as on `def`, type annotations are written using
+parentheses and colons, and implicit parameters are written in curly braces.
+
+Lean provides an additional syntax for very simple functions. In an expression surrounded by
+parentheses, a centered dot character · can stand for an parameter, and the expression inside the
+parentheses becomes the function's body.
+
+These are typical lambda expressions.
+-/
+
+-- Let's see a few examples!
+#check fun x => x + 1
+#eval (fun x => x + 1) 2
+
+#check fun (x : Int) => x + 1
+#eval (fun (x : Int) => x + 1) 2
+
+#check fun {α : Type} (x : α) => x
+#eval (fun {α : Type} (x : α) => x) 2
+
+#check (· + 1)
+#eval (· + 1) 2
+
+#check (· + 3, 2)
+#eval (· + 3, 2) 5
+
+#check (· , · +3)
+#eval (· , · +3) 2 1
+
+-- We can use pattern matching as well
+#check fun
+  | 0 => none
+  | n + 1 => some n
+
+-- Definitions with def that take arguments may be rewritten as function expressions.
+def double : Nat → Nat := fun
+  -- I don't see the benefit of this syntax
+  | 0 => 0
+  | n + 1 => double n + 2  -- Add 2 n times
