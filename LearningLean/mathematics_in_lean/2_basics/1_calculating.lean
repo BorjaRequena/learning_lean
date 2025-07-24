@@ -2,6 +2,7 @@ import Mathlib
 
 /-
 2.1 ** Calculating **
+https://leanprover-community.github.io/mathematics_in_lean/C02_Basics.html#calculating
 
 Lean provides the rw tactic to replace the left-hand side of an identity by the right-hand side
 of the goal. If a, b, and c are real numbers, `mul_assoc a b c` is the identity
