@@ -113,5 +113,124 @@ example (h : 1 ≤ a) (h' : b ≤ c) : 2 + a + exp b ≤ 3 * a + exp c := by
 
 -- Some theorems use *bi-implication* (↔) "if and only if". These can be used with `rw`
 example (h : a ≤ b) : exp a ≤ exp b := by
-  rw [exp_le_exp]  -- The ↔ rewrites the goal to a new one a ≤ b
+  rw [exp_le_exp]  -- The ↔ rewrites the goal to an equivalent one a ≤ b
   exact h
+
+/- In bi-implications of the form `h : A ↔ B`, we can take the forward, A → B, and reverse, A ← B,
+directions with `h.mp` and `h.mpr`, respectively. Here, mp stands for “modus ponens” and mpr stands
+for “modus ponens reverse.” You can also use `h.1` and `h.2` for `h.mp` and `h.mpr`, respectively,
+if you prefer. Thus the following proof works:
+-/
+
+example (h₀ : a ≤ b) (h₁ : c < d) : a + exp c + e < b + exp d + e := by
+  apply add_lt_add_of_lt_of_le  -- Create 2 goals: a + exp c < b + exp d and exp e ≤ exp e
+  -- Use dot notation to prove the first goal
+  · apply add_lt_add_of_le_of_lt h₀  -- Change goal to prove exp c < exp d given that a ≤ b
+    apply exp_lt_exp.mpr h₁  -- Use reverse of exp x < exp y ↔ x < y to prove exp c < exp d given c < d
+  apply le_refl -- Prove the second goal exp e ≤ exp e
+
+-- EXERCISE: prove the following theorems using the first one as example to solve numerical goals
+example : (0 : ℝ) < 1 := by norm_num
+
+example (h₀ : d ≤ e) : c + exp (a + d) ≤ c + exp (a + e) := by
+  apply add_le_add_left
+  rw [exp_le_exp]
+  -- apply exp_le_exp.mpr  -- This line does the same as the previous one
+  apply add_le_add_left h₀  -- Dunno why I couldn't use exact
+
+example (h₀ : d ≤ e) : c + exp (a + d) ≤ c + exp (a + e) := by
+  -- Alternative proof using linarith
+  have : exp (a + d) ≤ exp (a + e) := by
+    rw [exp_le_exp]
+    linarith
+  linarith [this]
+
+example (h : a ≤ b) : log (1 + exp a) ≤ log (1 + exp b) := by
+  have h₀ : 0 < 1 + exp a := by
+    apply add_pos  -- Creates 2 goals: 0 < 1 and 0 < exp a
+    · norm_num  -- Prove 0 < 1
+    · apply exp_pos  -- Prove 0 < exp a
+
+  apply log_le_log h₀  -- Remove the logs for both arguments being always positive
+  apply add_le_add  -- Creates 2 goals: 1 ≤ 1 and exp a ≤ exp b
+  · norm_num  -- Prove 1 ≤ 1. Could also be done with `le_refl`
+  exact exp_le_exp.mpr h  -- Prove exp a ≤ exp b given that a ≤ b
+
+example (h : a ≤ b) : log (1 + exp a) ≤ log (1 + exp b) := by
+  -- Alternative proof using linarith
+  have h₀ : 0 < 1 + exp a := by
+    linarith [exp_pos a]
+  apply log_le_log h₀
+  apply add_le_add_left (exp_le_exp.mpr h)  -- More compact syntax
+
+/- It is clear that finding the right tactics we need to carry out the proofs is a great part of
+writing them. There are multiple sources like:
+- Mathlib's repo: https://github.com/leanprover-community/mathlib4
+- Mathlib's docs: https://leanprover-community.github.io/mathlib4_docs/
+- Loogle: https://loogle.lean-lang.org
+- LeanExplore: https://www.leanexplore.com
+...
+
+One way is to use the `apply?` tactic, which tries to find the relevant theorem in the library.
+-/
+
+example : 0 ≤ a ^ 2 := by
+  apply?  -- Try this: exact sq_nonneg a
+
+-- EXERCISE: prove the following theorem using `apply?`
+example (h : a ≤ b) : c - exp b ≤ c - exp a := by
+  apply?  -- Finds a full strategy to prove the goal
+
+
+-- Here's another example of an inequality
+example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
+  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2 := by
+    calc
+      a ^ 2 - 2 * a * b + b ^ 2 = (a - b) ^ 2 := by ring
+      _ ≥ 0 := by apply pow_two_nonneg
+
+  calc
+    2 * a * b = 2 * a * b + 0 := by ring
+    _ ≤ 2 * a * b + (a ^ 2 - 2 * a * b + b ^ 2) := add_le_add (le_refl _) h
+    _ = a ^ 2 + b ^ 2 := by ring
+
+/- In this example, we find a few things worth highlighting. First, an expression s ≥ t is
+definitionally equivalent to t ≤ s. In principle, this means one should be able to use them
+interchangeably. But some of Lean’s automation does not recognize the equivalence, so Mathlib tends
+to favor ≤ over ≥. Second, we have used the ring tactic extensively. It is a real timesaver!
+Finally, notice that in the second line of the second calc proof, instead of writing by
+`exact add_le_add (le_refl _) h`, we can simply write the proof term `add_le_add (le_refl _) h`.
+
+In fact, the only cleverness in the proof above is figuring out the hypothesis h. Once we have it,
+the second calculation involves only linear arithmetic, and linarith can handle it.
+-/
+
+example : 2 * a * b ≤ a ^ 2 + b ^ 2 := by
+  have h : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2 := by
+    calc
+      a ^ 2 - 2 * a * b + b ^ 2 = (a - b) ^ 2 := by ring
+      _ ≥ 0 := by apply pow_two_nonneg
+  linarith
+
+-- EXERCISE: Use these ideas to prove the following theorem. You can use the theorem `abs_le'.mpr`.
+-- You will also need the constructor tactic to split a conjunction to two goals. Learn more about
+-- it in https://leanprover-community.github.io/mathematics_in_lean/C03_Logic.html#conjunction-and-biimplication
+example : |a * b| ≤ (a ^ 2 + b ^ 2) / 2 := by
+  have h₀ : a * b ≤ (a ^ 2 + b ^ 2) / 2 := by
+    have h₀' : 0 ≤ a ^ 2 - 2 * a * b + b ^ 2 := by
+      calc
+        a ^ 2 - 2 * a * b + b ^ 2 = (a - b) ^ 2 := by ring
+        _ ≥ 0 := by apply pow_two_nonneg
+    linarith
+  have h₁ : -(a * b) ≤ (a ^ 2 + b ^ 2) / 2 := by
+    have h₁' : 0 ≤ a ^ 2 + 2 * a * b + b ^ 2 := by
+      calc
+        a ^ 2 + 2 * a * b + b ^ 2 = (a + b) ^ 2 := by ring
+        _ ≥ 0 := by apply pow_two_nonneg
+    linarith
+  apply abs_le'.mpr  -- The new goal is a conjunction of propositions A ∧ B
+  constructor  -- Splits the goal into two goals: A and B
+  · exact h₀
+  · exact h₁
+
+#check abs_le'.mpr
