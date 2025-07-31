@@ -2,11 +2,14 @@ import Mathlib
 
 /-
 ** 3. Logic **
+https://leanprover-community.github.io/mathematics_in_lean/C03_Logic.html#
+
 Complex mathematical statements are built up from simple ones like these using logical terms like
 “and,” “or,” “not,” and “if … then,” “every,” and “some.” In this chapter, we show you how to work
 with statements that are built up in this way.
 
 ** 3.1 Implications and the Universal Quantifier **
+https://leanprover-community.github.io/mathematics_in_lean/C03_Logic.html#implication-and-the-universal-quantifier
 
 Consider the statement after the #check:
 -/
@@ -258,7 +261,7 @@ example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x
   -- Essentially we have to prove that c * f a ≤ c * f b
   -- We don't need the dsimp, we will handle this with the following apply
   apply mul_le_mul_of_nonneg_left _ nnc  -- We give nnc so we only have one hipothesis left
-  apply mf aleb  -- Prove f a ≤ f b given f is monotonic and a ≤ b
+  exact mf aleb  -- Prove f a ≤ f b given f is monotonic and a ≤ b
 
   -- First proof with terms
 example {c : ℝ} (mf : Monotone f) (nnc : 0 ≤ c) : Monotone fun x ↦ c * f x :=
@@ -270,7 +273,7 @@ example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) := by
   -- We need to prove that f (g a) ≤ f (g b) for monotonic f and g and a ≤ b
   apply mf  -- Given f monotonic, the new goal is to prove g a ≤ g b
   apply mg  -- Given g monotonic, the new goal is to prove a ≤ b
-  apply aleb  -- Easy!
+  exact aleb  -- Easy!
 
   -- Second proof with terms
 example (mf : Monotone f) (mg : Monotone g) : Monotone fun x ↦ f (g x) :=
