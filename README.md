@@ -9,9 +9,10 @@ Additionally, Lean has proven to be an extremely valuable tool to develop automa
 In this repository, I document my Lean 4-learning journey as I work my way through various material sources.
 1. I find the first chapter of [functional programming in Lean page](https://lean-lang.org/functional_programming_in_lean/) is a great way to start learning, as it introduces the basics of Lean 4 as a programing language.
 2. I enjoyed going through the [mathematics in lean](https://leanprover-community.github.io/mathematics_in_lean/) tutorial, as it offers an introduction to the methods for theorem proving and their syntax. There's also a [repository](https://github.com/avigad/mathematics_in_lean_source/tree/master) with the code version of the book.
-3. I also found the [natural number game](https://adam.math.hhu.de/#/g/leanprover-community/nng4) frames learning Lean as a game, which is kind of addictive!
+3. The [Hitchhiker's Guide to Logical Verification](https://lean-forward.github.io/hitchhikers-guide/2023/) with Lean 4 is an excellent and very complete source that introduces the fundamentals of mathematical proofs together with all the Lean 4 details as a programming language (type system, functional programming, etc.).
+4. I also found the [natural number game](https://adam.math.hhu.de/#/g/leanprover-community/nng4) frames learning Lean as a game, which is kind of addictive!
 
-# Style guides for Lean
+# Style guidelines for Lean
 
 In the [Lean 4 survival guide](https://github.com/leanprover-community/mathlib4/wiki/Lean-4-survival-guide-for-Lean-3-users) contains some guidelines for naming conventions.
 I found the TL;DR-version of it is:
