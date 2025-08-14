@@ -2,6 +2,7 @@ import Mathlib
 
 /-
 ** Conjunction and Iff **
+https://leanprover-community.github.io/mathematics_in_lean/C03_Logic.html#conjunction-and-iff
 
 You have already seen that the conjunction symbol, `∧`, is used to express “and.” The constructor
 tactic allows you to prove a statement of the form `A ∧ B` by proving `A` and then proving `B`.
